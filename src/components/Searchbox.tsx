@@ -1,13 +1,23 @@
+import { cn } from '@/utils/cn'
 import { IoSearch } from 'react-icons/io5'
 
-interface Props {}
+interface Props {
+  className?: string
+  value: string
+  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined
+  onSubmit: React.FormEventHandler<HTMLFormElement> | undefined
+}
 
-export default function Searchbox ({}: Props) {
+export default function Searchbox ({ value, onChange, onSubmit, className }: Props): JSX.Element {
   return (
-    <form className="flex relative items-center justify-center h-10">
+    <form onSubmit={onSubmit}
+      className={cn('flex relative items-center justify-center h-10', className)}
+    >
       <input type="text" placeholder='Buscar País'
         className='px-4 py-2 w-[230px] border border-gray-300
         rounded-1-md focus:outline-none focus:border-blue-500 h-full'
+        onChange={onChange}
+        value={value}
       />
       <button className='px-4 py-[9px] bg-blue-500
         text-white rounded-r-md focus:outline-none
