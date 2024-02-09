@@ -1,5 +1,4 @@
 'use client'
-// https://api.openweathermap.org/data/2.5/forecast?q=cordoba&appid=cd01bf34d4ef941e71683efacb86b4c7&cnt=56&lang=es
 
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -27,7 +26,7 @@ export default function Home (): JSX.Element {
     queryKey: ['weatherData'],
     queryFn: async () => {
       const res = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${place}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&cnt=56&lang=es`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${place}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&cnt=56`
       )
       return res.data
     }
