@@ -4,11 +4,15 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { type WeatherData } from '../../type'
-import { format, parseISO } from 'date-fns'
+import { format, fromUnixTime, parseISO } from 'date-fns'
 import Container from '@/components/Container'
 import { convertKelvinToCelsius } from '@/utils/convertKelvinToCelsius'
 import WeatherIcon from '@/components/WeatherIcon'
 import { getDayOrNightIcon } from '@/utils/getDayOrNightIcon'
+import WeatherDetails from '@/components/WeatherDetails'
+import { metersToKm } from '@/utils/metersToKm'
+import { convertWindSpeed } from '@/utils/convertWindSpeed'
+import ForecastWeatherDetails from '@/components/ForecastWeatherDetails'
 
 export default function Home (): JSX.Element {
   const { isPending, error, data } = useQuery<WeatherData>({
@@ -29,6 +33,22 @@ export default function Home (): JSX.Element {
   }
 
   const firstData = data?.list[0]
+
+  const uniqueDates = [
+    ...new Set(
+      data?.list.map(
+        (entry) => new Date(entry.dt * 1000).toISOString().split('T')[0]
+      )
+    )
+  ]
+
+  const firstDateForEachDate = uniqueDates.map((date) => {
+    return data?.list.find((entry) => {
+      const entryDate = new Date(entry.dt * 1000).toISOString().split('T')[0]
+      const entryTime = new Date(entry.dt * 1000).getHours()
+      return entryDate === date && entryTime >= 6
+    })
+  })
 
   return (
     <main className='px-3 max-w-7xl mx-auto flex flex-col gap-9 w-full pb-10 pt-4'>
@@ -79,13 +99,41 @@ export default function Home (): JSX.Element {
           </Container>
           {/* right */}
           <Container className='bg-yellow-300/80 px-6 gap-4 justify-between overflow-x-auto'>
-
+            <WeatherDetails
+              visibility={metersToKm(firstData?.visibility ?? 10000)}
+              airPressure={`${firstData?.main.pressure} hPa`}
+              humidity={`${firstData?.main.humidity}%`}
+              windSpeed={convertWindSpeed(firstData?.wind.speed ?? 1.64)}
+              sunrise={format(fromUnixTime(data?.city.sunrise ?? 1702949452), 'H:mm')}
+              sunset={format(fromUnixTime(data?.city.sunset ?? 1702949452), 'H:mm')}
+            />
           </Container>
         </div>
       </section>
       {/* 7 day forecast */}
       <section className='flex w-full flex-col gap-4'>
         <p className='text-2xl'>Forecast (7 days)</p>
+        {
+          firstDateForEachDate.map((d, index) => (
+            <ForecastWeatherDetails
+              key={index}
+              weatherIcon={d?.weather[0].icon ?? '02d'}
+              date={format(parseISO(d?.dt_txt ?? ''), 'dd.MM')}
+              day={format(parseISO(d?.dt_txt ?? ''), 'EEEE')}
+              temp={d?.main.temp ?? 296.37}
+              feels_like={d?.main.feels_like ?? 296.37}
+              temp_min={d?.main.temp_min ?? 296.37}
+              temp_max={d?.main.temp_max ?? 296.37}
+              description={d?.weather[0].description ?? 'Clear sky'}
+              visibility={metersToKm(d?.visibility ?? 10000)}
+              humidity={`${d?.main.humidity}%`}
+              windSpeed={convertWindSpeed(d?.wind.speed ?? 1.64)}
+              airPressure={`${d?.main.pressure} hPa`}
+              sunrise={format(fromUnixTime(data?.city.sunrise ?? 1702949452), 'H:mm')}
+              sunset={format(fromUnixTime(data?.city.sunset ?? 1702949452), 'H:mm')}
+            />
+          ))
+        }
       </section>
     </main>
   )
