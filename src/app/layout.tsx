@@ -3,7 +3,6 @@
 // import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/Navbar'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -24,7 +23,7 @@ export default function RootLayout ({
       <QueryClientProvider client={queryClient}>
         <body className={inter.className} suppressHydrationWarning={true}>
           <div className="flex flex-col gap-4 bg-gray-100 min-h-screen">
-            <Navbar />
+
             {children}
           </div>
         </body>
