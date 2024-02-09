@@ -4,17 +4,13 @@ import Container from './Container'
 import WeatherIcon from './WeatherIcon'
 import WeatherDetails from './WeatherDetails'
 
-interface Props {}
-
-export default function ForecastWeatherDetails (props: ForecastDetailProps) {
+export default function ForecastWeatherDetails (props: ForecastDetailProps): JSX.Element {
   const {
     weatherIcon = '02d',
     date = '19.09',
     day = 'Monday',
     temp,
     feels_like,
-    temp_min,
-    temp_max,
     description
   } = props
   return (

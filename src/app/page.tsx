@@ -47,6 +47,14 @@ export default function Home (): JSX.Element {
     )
   }
 
+  if (error != null) {
+    return (
+      <div className='flex items-center min-h-screen justify-center'>
+        <p>Error: {error.message}</p>
+      </div>
+    )
+  }
+
   const firstData = data?.list[0]
 
   const uniqueDates = [
